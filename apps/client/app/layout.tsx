@@ -1,5 +1,5 @@
 import "./globals.css";
-import { ReduxProvider } from "./redux.provider";
+import { NextSessionProvider, ReduxProvider } from "./providers";
 
 export default function RootLayout({
   children,
@@ -9,7 +9,9 @@ export default function RootLayout({
   return (
     <html>
       <body>
-        <ReduxProvider>{children}</ReduxProvider>
+        <NextSessionProvider>
+          <ReduxProvider>{children}</ReduxProvider>
+        </NextSessionProvider>
       </body>
     </html>
   );

@@ -9,6 +9,7 @@
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "prettier": "^3.7.4",
     "turbo": "^2.7.5",
     "typescript": "5.9.2"
@@ -23,6 +24,7 @@
   ],
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
+    "bcrypt": "^6.0.0",
     "react-redux": "^9.2.0",
     "tailwind-merge": "^3.4.0"
   }
