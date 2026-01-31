@@ -1,14 +1,25 @@
-import { prismaClient } from "@repo/db";
-import { LoginButton } from "./components/LoginButton";
-import { Appbar } from "./components/Appbar";
+"use client";
 
-export default async function Home() {
-  const user = await prismaClient.user.findFirst() 
+import { useEffect, useState } from "react";
+import UserCard from "./components/UserCard";
+
+export default function Home() {
+  const [allUsers, setAllUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/users")
+      .then(res => res.json())
+      .then(data => setAllUsers(data));
+  }, []);
+
   return (
-    <div>
-      {/* {user?.name ?? "No user added yet"}
-      <LoginButton className="bg-blue-600 hover:bg-blue-700" /> */}
-      <Appbar/>
+    <div className="p-8">
+      <h1 className="text-3xl font-bold mb-6">Welcome to Wallet App</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {allUsers.map((user: any) => (
+          <UserCard key={user.id} user={user} />
+        ))}
+      </div>
     </div>
   );
-} 
+}

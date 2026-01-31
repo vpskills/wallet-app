@@ -1,5 +1,6 @@
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import type { Account, Profile, User } from "next-auth";
 import { prismaClient as db } from "@repo/db"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google";
@@ -30,8 +31,8 @@ export const authOptions = {
                         return {
                             id: existingUser.id.toString(),
                             name: existingUser.name,
-                            email: existingUser.number,
-                            phone: existingUser.email
+                            email: existingUser.email,
+                            phone: existingUser.number
                         }
                     }
                     return null;
@@ -50,7 +51,8 @@ export const authOptions = {
                     return {
                         id: user.id.toString(),
                         name: user.name,
-                        email: user.number
+                        email: user.email,
+                        phone: user.number
                     }
                 } catch (e) {
                     console.error(e);
@@ -66,6 +68,47 @@ export const authOptions = {
     ],
     secret: process.env.JWT_SECRET,
     callbacks: {
+        async signIn({ user, account, profile }: { user: User; account: Account | null; profile?: Profile }) {
+            if (account?.provider === "google") {
+                try {
+                    const existingUser = await db.user.findFirst({
+                        where: {
+                            email: user.email || ""
+                        }
+                    });
+
+                    if (!existingUser && user.email) {
+                        await db.user.create({
+                            data: {
+                                email: user.email,
+                                name: user.name || "",
+                                number: "",
+                                password: ""
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error saving user:", error);
+                    return false; // Reject sign-in on error
+                }
+            }
+            return true; // Allow sign-in
+        },
+        async jwt({ token, user }: { token: JWT; user?: User }) {
+            if (user) {
+                if (user.email) {
+                    const dbUser = await db.user.findFirst({
+                        where: {
+                            email: user.email
+                        }
+                    });
+                    if (dbUser) {
+                        token.sub = dbUser.id.toString();
+                    }
+                }
+            }
+            return token;
+        },
         async session({ token, session }: { token: JWT, session: Session }) {
             if (session.user) {
                 // @ts-ignore

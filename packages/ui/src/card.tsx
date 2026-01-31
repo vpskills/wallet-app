@@ -1,4 +1,5 @@
 import { type JSX } from "react";
+import { twMerge } from "tailwind-merge";
 
 export function Card({
   className,
@@ -13,7 +14,7 @@ export function Card({
 }): JSX.Element {
   return (
     <a
-      className={className}
+      className={twMerge('p-2 border dark:border-neutral-700', className)}
       href={`${href}?utm_source=create-turbo&utm_medium=basic&utm_campaign=create-turbo"`}
       rel="noopener noreferrer"
       target="_blank"

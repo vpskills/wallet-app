@@ -12,7 +12,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = ({ children, className, appName, ...props }: ButtonProps) => {
   return (
     <button
-      className={twMerge('bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-md px-4 py-2 outline-none', className)}
+      className={twMerge('bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-md px-4 py-2 focus:outline-2 focus:outline-offset-3', className)}
       {...props}
     >
       {children}
